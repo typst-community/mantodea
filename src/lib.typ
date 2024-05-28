@@ -3,6 +3,7 @@
 
 #import "author.typ"
 #import "component.typ"
+#import "definition.typ"
 #import "example.typ"
 #import "link.typ"
 #import "theme.typ"
