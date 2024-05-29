@@ -1,4 +1,4 @@
-#import "packages.typ" as _pkg
+#import "_pkg.typ"
 
 #import "author.typ"
 #import "component.typ"

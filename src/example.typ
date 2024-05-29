@@ -1,4 +1,4 @@
-#import "/src/packages.typ" as _pkg
+#import "/src/_pkg.typ"
 #import "/src/theme.typ" as _theme
 
 /// Show a source code frame.

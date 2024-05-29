@@ -1,4 +1,4 @@
-#import "packages.typ" as _pkg
+#import "_pkg.typ"
 #import "theme.typ" as _theme
 
 /// The default style applied over the whole document.

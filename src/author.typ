@@ -2,7 +2,7 @@
 ///
 /// Can be used to add new or alter existing marks, marks come in the form of
 /// arbitrary content which is placed as a superscript.
-#let marks = state("__mantodea:util:author:marks", (
+#let marks = state("__mantodea:author:marks", (
   marks: (:),
   current-auto: 0,
 ))

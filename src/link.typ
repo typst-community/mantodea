@@ -194,7 +194,7 @@
 ///
 /// The default matchers include GitHub, GitLab and Codeberg as well as a crude
 /// git-subdomain matcher which returns the top and second level domain.
-#let forges = state("__mantodea:util:link:forges", (
+#let forges = state("__mantodea:link:forges", (
   GitHub: s => s.contains("github.com"),
   GitLab: s => s.contains("gitlab.com"),
   Codeberg: s => s.contains("codeberg.org"),

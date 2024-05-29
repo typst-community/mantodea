@@ -1,4 +1,4 @@
-#import "/src/packages.typ" as _pkg
+#import "/src/_pkg.typ"
 
 /// Draw an alert box.
 ///
