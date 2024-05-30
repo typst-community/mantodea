@@ -1,9 +1,10 @@
 #import "/src/_pkg.typ"
+#import "/src/_valid.typ"
 #import "/src/theme.typ" as _theme
 
 #let _columns = columns
 
-#let fill(arr, len, new) = if arr.len() >= len {
+#let _fill(arr, len, new) = if arr.len() >= len {
   arr
 } else {
   arr + ((new,) * (len - arr.len()))
@@ -24,11 +25,17 @@
   target: heading.where(outlined: true),
   columns: 1,
   theme: _theme.default,
+  _validate: true,
 ) = {
-  _pkg.t4t.assert.any-type(str, content, title)
-  _pkg.t4t.assert.any-type(selector, function, target)
-  _pkg.t4t.assert.any-type(int, columns)
-  _pkg.t4t.assert.any-type(dictionary, theme)
+  if _validate {
+    import _valid as z
+
+    _ = z.parse(title, z.content(), scope: ("title",))
+    _ = z.parse(columns, z.integer(), scope: ("columns",))
+    _ = z.parse(theme, _theme.schema(), scope: ("theme",))
+
+    _pkg.t4t.assert.any-type(selector, function, target)
+  }
 
   // NOTE: unsure if this looks good, this also doens't work in CI for now
   // set text(font: theme.fonts.headings)
@@ -61,7 +68,7 @@
 
     for part in parts {
       if part.level >= indent-stack.len() {
-        indent-stack = fill(indent-stack, part.level, 0em)
+        indent-stack = _fill(indent-stack, part.level, 0em)
       }
 
       let level-max = indent-stack.at(part.level - 1)

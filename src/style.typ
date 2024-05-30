@@ -1,4 +1,5 @@
 #import "_pkg.typ"
+#import "_valid.typ"
 #import "theme.typ" as _theme
 
 /// The default style applied over the whole document.
@@ -7,7 +8,15 @@
 /// -> function
 #let default(
   theme: _theme.default,
+  _validate: true,
 ) = body => {
+  let theme = theme
+
+  if _validate {
+    import _valid as z
+    theme = z.parse(theme, _theme.schema(), scope: ("theme",))
+  }
+
   set page(
     numbering: "1",
     header: context {

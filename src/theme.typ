@@ -1,3 +1,76 @@
+#import "_pkg.typ"
+#import "_valid.typ"
+
+#let schema = _valid.dictionary.with((
+  fonts: _valid.dictionary((
+    serif: _valid.array(_valid.string()),
+    sans:  _valid.array(_valid.string()),
+    mono:  _valid.array(_valid.string()),
+
+    text:     _valid.array(_valid.string()),
+    headings: _valid.array(_valid.string()),
+    code:     _valid.array(_valid.string()),
+  )),
+  colors: _valid.dictionary((
+    primary:   _valid.paint(),
+    secondary: _valid.paint(),
+    argument:  _valid.paint(),
+    option:    _valid.paint(),
+    value:     _valid.paint(),
+    command:   _valid.paint(),
+    comment:   _valid.paint(),
+    module:    _valid.paint(),
+
+    text:      _valid.paint(),
+    muted:     _valid.paint(),
+
+    info:      _valid.paint(),
+    warning:   _valid.paint(),
+    error:     _valid.paint(),
+    success:   _valid.paint(),
+
+    types: _valid.dictionary((
+      // special
+      any:        _valid.paint(),
+      "auto":     _valid.paint(),
+      "none":     _valid.paint(),
+
+      // foundations
+      arguments:  _valid.paint(),
+      array:      _valid.paint(),
+      bool:       _valid.paint(),
+      bytes:      _valid.paint(),
+      content:    _valid.paint(),
+      datetime:   _valid.paint(),
+      dictionary: _valid.paint(),
+      float:      _valid.paint(),
+      function:   _valid.paint(),
+      int:        _valid.paint(),
+      location:   _valid.paint(),
+      plugin:     _valid.paint(),
+      regex:      _valid.paint(),
+      selector:   _valid.paint(),
+      str:        _valid.paint(),
+      type:       _valid.paint(),
+      label:      _valid.paint(),
+
+      // layout
+      alignment:  _valid.paint(),
+      angle:      _valid.paint(),
+      direction:  _valid.paint(),
+      fraction:   _valid.paint(),
+      length:     _valid.paint(),
+      ratio:      _valid.paint(),
+      relative:   _valid.paint(),
+
+      // visualize
+      color:      _valid.paint(),
+      gradient:   _valid.paint(),
+      stroke:     _valid.paint(),
+    )),
+  )),
+))
+
 #let default = (
   fonts: (
     serif: ("Linux Libertine", "Liberation Serif"),

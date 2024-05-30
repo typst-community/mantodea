@@ -1,4 +1,5 @@
 #import "/src/_pkg.typ"
+#import "/src/_valid.typ"
 #import "/src/theme.typ" as _theme
 
 #let _version = version
@@ -28,25 +29,38 @@
   abstract: lorem(100),
   license: "MIT",
   theme: _theme.default,
+  _validate: true,
 ) = {
-  let assert-text = _pkg.t4t.assert.any-type.with(str, content)
-  let assert-maybe-text = _pkg.t4t.assert.any-type.with(str, content, type(none))
+  if _validate {
+    import _valid as z
 
-  assert-text(title)
-  assert-maybe-text(subtitle)
-  assert-text(array, authors)
-  _pkg.t4t.assert.any-type(str, array, type(none), urls)
-  assert-maybe-text(abstract)
-  _pkg.t4t.assert.any-type(_version, version)
-  assert-maybe-text(license)
-  _pkg.t4t.assert.any-type(dictionary, theme)
+    _ = z.parse(title, z.content(), scope: ("title",))
+    _ = z.parse(subtitle, z.content(optional: true), scope: ("subtitle",))
+    _ = z.parse(abstract, z.content(optional: true), scope: ("abstract",))
+    _ = z.parse(license, z.content(optional: true), scope: ("license",))
+    _ = z.parse(theme, _theme.schema(), scope: ("theme",))
 
-  if authors != none {
-    authors = _pkg.t4t.def.as-arr(authors)
-  }
+    authors = z.parse(
+      authors,
+      z.array(z.string(), min: 1, pre-transform: z.coerce.array),
+      scope: ("authors",),
+    )
 
-  if urls != none {
-    urls = _pkg.t4t.def.as-arr(urls)
+    urls = z.parse(
+      urls,
+      z.array(
+        z.string(),
+        pre-transform: z.coerce.array,
+        post-transform: (self, it) => if it == (none,) { none } else { it },
+        optional: true,
+      ),
+      scope: ("urls",),
+    )
+
+    _pkg.t4t.assert.any-type(_version, version)
+  } else {
+    authors = if type(authors) == str { (authors,) } else { authors }
+    urls = if type(urls) == str { (urls,) } else { urls }
   }
 
   pad(y: 10em, x: 5em, {

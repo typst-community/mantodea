@@ -1,3 +1,4 @@
+#import "/src/_valid.typ"
 #import "/src/theme.typ" as _theme
 
 #let _type = type
@@ -211,7 +212,20 @@
 /// - url (str): The url for the link and the footnote.
 /// - label (str): The label for the link.
 /// -> content
-#let footlink(url, label) = [#link(url, label)#footnote(link(url))]
+#let footlink(
+  url,
+  label,
+  _validate: true,
+) = {
+  if _validate {
+    import _valid as z
+    _ = z.parse(url, z.string(), scope: ("url",))
+    _ = z.parse(label, z.content(), scope: ("label",))
+  }
+
+  link(url, label)
+  footnote(link(url))
+}
 
 /// Creates a link with footnote to a source forge and optional repo.
 ///
@@ -224,8 +238,19 @@
   base,
   ..relative,
   label: auto,
+  _validate: true,
 ) = {
-  let relative = relative.pos().at(0, default: none)
+  if _validate {
+    import _valid as z
+    _ = z.parse(base, z.string(), scope: ("base",))
+    _ = z.parse(
+      relative,
+      z.sink(positional: z.array(z.string(optional: true))),
+      scope: ("relative",),
+    )
+  }
+
+  relative = relative.pos().at(0, default: none)
 
   if base.ends-with("/") {
     base = base.silce(0, -1)
@@ -256,26 +281,26 @@
     base
   }
 
-  footlink(url, label)
+  footlink(url, label, _validate: false)
 }
 
 /// Creates a link with a footnote to a GitHub repository.
 ///
 /// - repo (str): The repository path.
 /// -> content
-#let github(repo) = forge("https://github.com", repo)
+#let github(repo, _validate: true) = forge("https://github.com", repo, _validate: _validate)
 
 /// Creates a link with a footnote to a GitLab repository.
 ///
 /// - repo (str): The repository path.
 /// -> content
-#let gitlab(repo) = forge("https://gitlab.com", repo)
+#let gitlab(repo, _validate: true) = forge("https://gitlab.com", repo, _validate: _validate)
 
 /// Creates a link with a footnote to a Codeberg repository.
 ///
 /// - repo (str): The repository path.
 /// -> content
-#let codeberg(repo) = forge("https://codeberg.org", repo)
+#let codeberg(repo, _validate: true) = forge("https://codeberg.org", repo, _validate: _validate)
 
 /// Creates a link with a footnote to the Typst Universe page of a package.
 ///
@@ -283,10 +308,20 @@
 /// - version (version, none): The version of the package, this has no effect
 ///   on the link itself.
 /// -> content
-#let package(name, version: none) = {
+#let package(
+  name,
+  version: none,
+  _validate: true,
+) = {
+  if _validate {
+    import _valid as z
+    _ = z.parse(name, z.string(), scope: ("name",))
+    _ = z.parse(version, z.version(optional: true), scope: ("version",))
+  }
+
   let base = "https://typst.app/universe/package"
   // NOTE: lowering the name is always valid here
-  footlink((base, lower(name)).join("/"), smallcaps(name))
+  footlink((base, lower(name)).join("/"), smallcaps(name), _validate: false)
 }
 
 /// Creates a link with a footnote to the Typst package repository.
@@ -295,7 +330,19 @@
 /// - version (version): The version of the package.
 /// - namespace (str): The package namespace to use.
 /// -> content
-#let package-repo(name, version, namespace: "preview") = {
+#let package-repo(
+  name,
+  version,
+  namespace: "preview",
+  _validate: true,
+) = {
+  if _validate {
+    import _valid as z
+    _ = z.parse(name, z.string(), scope: ("name",))
+    _ = z.parse(version, z.version(), scope: ("version",))
+    _ = z.parse(namespace, z.string(), scope: ("namespace",))
+  }
+
   let base = "https://github.com/typst/packages/tree/main/packages"
   let version = str(version)
 
@@ -304,6 +351,7 @@
     // largely use kebab-case package names so this will be fine
     (base, namespace, lower(name), version).join("/"),
     smallcaps(name + ":" + version),
+    _validate: false,
   )
 }
 
@@ -313,13 +361,21 @@
 ///   - if this is a `str`, it is inferred to be the type representation
 ///   - if this is a type, it is inferred to be the expected type
 ///   - if this is a value, it is inferred to be a value of the expected type
+/// - with-footnote (bool):
 /// - theme (theme): The theme to use for this type.
 /// -> content
 #let type(
   value,
   with-footnote: false,
   theme: _theme.default,
+  _validate: true,
 ) = {
+  if _validate {
+    import _valid as z
+    _ = z.parse(with-footnote, z.boolean(), scope: ("with-footnote",))
+    _ = z.parse(theme, _theme.schema(), scope: ("theme",))
+  }
+
   let type = if _type(value) == str {
     value
   } else if _type(value) == _type {
@@ -339,11 +395,15 @@
     aliases.at(type, default: type)
   }
 
-  footlink(typst.types.at(type), box(
-    inset: (x: 0.25em),
-    outset: (y: 0.25em),
-    radius: 0.25em,
-    fill: color,
-    raw(type),
-  ))
+  footlink(
+    typst.types.at(type),
+    box(
+      inset: (x: 0.25em),
+      outset: (y: 0.25em),
+      radius: 0.25em,
+      fill: color,
+      raw(type),
+    ),
+    _validate: false,
+  )
 }

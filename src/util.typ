@@ -10,21 +10,29 @@
 #let alert(
   color: purple,
   size: 0.8em,
+  _validate: true,
   ..args,
   body,
-) = _pkg.showybox.showybox(
-  width: 100%,
-  frame: (
-    border-color: color,
-    title-color: color,
-    body-color: color.lighten(88%),
-    thickness: (left: 2pt, rest: 0pt),
-    radius: 0pt,
-    inset: 8pt,
-  ),
-  ..args,
-  text(size: size, fill: color.darken(60%), body),
-)
+) = {
+  if _validate {
+    import _pkg: z
+    // NOTE: intentionally left empty, we only validte our own inputs
+  }
+
+  _pkg.showybox.showybox(
+    width: 100%,
+    frame: (
+      border-color: color,
+      title-color: color,
+      body-color: color.lighten(88%),
+      thickness: (left: 2pt, rest: 0pt),
+      radius: 0pt,
+      inset: 8pt,
+    ),
+    ..args,
+    text(size: size, fill: color.darken(60%), body),
+  )
+}
 
 /// Draw a blue alert box. See `alert`.
 #let hint = alert.with(color: blue)

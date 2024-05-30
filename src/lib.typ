@@ -1,4 +1,5 @@
 #import "_pkg.typ"
+#import "_valid.typ"
 
 #import "author.typ"
 #import "component.typ"
@@ -36,31 +37,42 @@
   abstract: lorem(100),
   license: "MIT",
   theme: theme.default,
+  _validate: true,
 ) = body => {
-  let assert-text = _pkg.t4t.assert.any-type.with(str, content)
-  let assert-maybe-text = _pkg.t4t.assert.any-type.with(str, content, type(none))
+  if _validate {
+    import _valid as z
 
-  assert-text(title)
-  assert-maybe-text(subtitle)
-  assert-text(array, authors)
-  _pkg.t4t.assert.any-type(str, array, type(none), urls)
-  assert-maybe-text(abstract)
-  _pkg.t4t.assert.any-type(_version, version)
-  assert-maybe-text(license)
-  _pkg.t4t.assert.any-type(dictionary, theme)
+    z.parse(title, z.content(), scope: ("title",))
+    z.parse(subtitle, z.content(optional: true), scope: ("subtitle",))
+    z.parse(abstract, z.content(optional: true), scope: ("abstract",))
+    z.parse(license, z.content(optional: true), scope: ("license",))
+    z.parse(theme, _theme.schema, scope: ("theme",))
 
-  let authors = authors
-  if authors != none {
-    authors = _pkg.t4t.def.as-arr(authors)
-  }
+    authors = z.parse(
+      z.array(z.string(), min: 1, pre-transform: z.coerce.array),
+      authors,
+      scope: ("authors",),
+    )
 
-  let urls = urls
-  if urls != none {
-    urls = _pkg.t4t.def.as-arr(urls)
+    urls = z.parse(
+      urls,
+      z.array(
+        z.string(),
+        pre-transform: z.coerce.array,
+        post-transform: (self, it) => if it == (none,) { none } else { it },
+        optional: true,
+      ),
+      scope: ("urls",),
+    )
+
+    _pkg.t4t.assert.any-type(_version, version)
+  } else {
+    authors = if type(authors) == str { (authors,) } else { authors }
+    urls = if type(urls) == str { (urls,) } else { urls }
   }
 
   set document(title: title, author: authors)
-  show: style.default(theme: theme)
+  show: style.default(theme: theme, _validate: false)
 
   component.make-title-page(
     title: title,
@@ -72,12 +84,14 @@
     abstract: abstract,
     license: license,
     theme: theme,
+    _validate: false,
   )
 
   component.make-table-of-contents(
     title: heading(outlined: false, numbering: none, level: 2)[Table of Contents],
     columns: 1,
     theme: theme,
+    _validate: false,
   )
 
   body
