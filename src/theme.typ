@@ -103,6 +103,12 @@
       let red = rgb(255, 203, 195)
       let gray = rgb(239, 240, 243)
       let purple = rgb(230, 218, 255)
+      let gradient-colors = (
+        (rgb("#7cd5ff"), 0%),
+        (rgb("#a6fbca"), 33%),
+        (rgb("#fff37c"), 66%),
+        (rgb("#ffa49d"), 100%),
+      )
 
       (
         // special
@@ -139,8 +145,8 @@
         relative: purple,
 
         // visualize
-        color: gradient.linear(..color.map.spectral, angle: 180deg),
-        gradient: gradient.linear(..color.map.spectral, angle: 180deg),
+        color: gradient.linear(..gradient-colors),
+        gradient: gradient.linear(..gradient-colors),
         stroke: gray,
       )
     }
