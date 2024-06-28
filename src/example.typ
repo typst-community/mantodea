@@ -35,9 +35,9 @@
 /// - side-by-side (bool): Whether or not the example source and output should
 ///   be shown side by side.
 /// - scope (dictionary): The scope to pass to `eval`.
-/// - breakable (bool): If the frame can brake over multiple pages.
-/// - result (content): The content to render as the example result. Evaluated
-///  `eval`.
+/// - breakable (bool): Whether the frame can brake over multiple pages.
+/// - result (content, auto): The content to render as the example result. If
+///   `auto` then `source` is evaluated and used as result.
 /// - source (content): A raw element containing the source code to evaluate.
 /// - theme (theme): The theme to use for this code example.
 /// -> content
